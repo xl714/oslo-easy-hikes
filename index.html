@@ -1,268 +1,453 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Année sabbatique – compte à rebours</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oslo: randos faciles (sans grosse logistique)</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --card:#121725;
+      --muted:#9aa4b2;
+      --text:#e9eef6;
+      --accent:#7dd3fc;
+      --chip:#1b2336;
+      --border:rgba(255,255,255,.08);
+      --shadow: 0 10px 35px rgba(0,0,0,.35);
+      --radius: 18px;
+      --max: 1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(125,211,252,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 110% 0%, rgba(167,139,250,.18), transparent 45%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:34px 18px 18px;
+      max-width: var(--max);
+      margin:0 auto;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing:.2px;
+      line-height:1.15;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      line-height:1.5;
+      max-width: 80ch;
+    }
 
-    <!--
-    Cette page web affiche un compte à rebours jusqu'au 31 mai 2026 et
-    calcule le nombre de jours ouvrés restants en tenant compte des
-    week‑ends, des jours fériés et des congés personnels. Pour rendre
-    l’attente plus agréable, un diaporama de photos d’Asie du Sud‑Est
-    défile en arrière‑plan. La typographie et les couleurs ont été
-    modernisées et la taille du nombre de jours de travail restants a
-    été agrandie.
-  -->
+    .toolbar{
+      max-width: var(--max);
+      margin: 14px auto 0;
+      padding: 0 18px 18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
 
-    <!-- Importation d’une police élégante -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    .search{
+      flex: 1 1 320px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 0 rgba(255,255,255,.04) inset;
+    }
+    .search input{
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size: 14px;
+    }
+    .pillrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      flex: 0 1 auto;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-size: 13px;
+      transition: transform .08s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.07); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.active{
+      border-color: rgba(125,211,252,.5);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
 
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        font-family: "Montserrat", sans-serif;
-        background: #0b0f19;
-        color: #e8ecf6;
-        overflow: hidden;
+    main{
+      max-width: var(--max);
+      margin:0 auto;
+      padding: 0 18px 40px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .card{
+      grid-column: span 12;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 60%), var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:grid;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 860px){
+      .card{
+        grid-column: span 6;
+        grid-template-columns: 220px 1fr;
+        min-height: 220px;
       }
+    }
+    .media{
+      position:relative;
+      background: rgba(255,255,255,.03);
+      min-height: 170px;
+    }
+    @media (min-width: 860px){
+      .media{ min-height: 100%; }
+    }
+    .media img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .content{
+      padding: 16px 16px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .titleline{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    h2{
+      margin:0;
+      font-size: 18px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 2px;
+    }
+    .chip{
+      background: var(--chip);
+      border:1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .desc{
+      margin:0;
+      color: var(--text);
+      opacity: .92;
+      line-height:1.55;
+      font-size: 14px;
+    }
+    .meta{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+    .meta small{ color: var(--muted); }
+    .link{
+      color: var(--accent);
+      text-decoration:none;
+      font-size: 13px;
+      border:1px solid rgba(125,211,252,.35);
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(125,211,252,.08);
+      transition: background .15s ease, transform .08s ease;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .link:hover{ background: rgba(125,211,252,.12); }
+    .link:active{ transform: translateY(1px); }
 
-      /* Conteneur du diaporama : occupe tout l'écran et placé derrière le contenu */
-      .slideshow-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: 0;
-      }
+    footer{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 18px 30px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.5;
+      opacity:.95;
+    }
+    .note{
+      background: rgba(255,255,255,.03);
+      border:1px dashed var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    code{
+      background: rgba(255,255,255,.06);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Oslo: randos faciles (zéro prise de tête) 🥾</h1>
+  <p class="sub">
+    Une sélection de balades/randos à la journée accessibles depuis la ville (métro/bus), parfaites pour “maximiser le dehors” sans logistique lourde.
+    Les distances/durées sont données à titre indicatif (elles varient selon variantes et pauses).
+  </p>
+</header>
 
-      /* Chaque image du diaporama occupe toute la surface et utilise un fondu */
-      .slide {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
-      }
+<section class="toolbar" aria-label="Outils">
+  <div class="search" role="search">
+    <span aria-hidden="true">🔎</span>
+    <input id="q" type="search" placeholder="Rechercher (ex: lac, vue, forêt, baignade)..." autocomplete="off" />
+  </div>
 
-      /* Conteneur principal pour centrer le texte */
-      .wrap {
-        height: 100%;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        position: relative;
-        z-index: 2;
-      }
+  <div class="pillrow">
+    <button class="btn active" data-filter="all">Tout</button>
+    <button class="btn" data-filter="vue">Vues</button>
+    <button class="btn" data-filter="lac">Lacs</button>
+    <button class="btn" data-filter="foret">Forêt</button>
+    <button class="btn" data-filter="urbain">Très proche</button>
+  </div>
+</section>
 
-      .content {
-        position: relative;
-        z-index: 3;
-        padding: 20px;
-        background: rgba(11, 15, 25, 0.4);
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      }
+<main>
+  <div id="grid" class="grid" aria-live="polite"></div>
+</main>
 
-      .title {
-        font-size: clamp(32px, 6vw, 80px);
-        font-weight: 600;
-        margin-bottom: 16px;
-        /* letter-spacing: 0.05em; */
-        letter-spacing: 2px;
-        text-align: left;
-      }
+<footer>
+  <div class="note">
+    Images: URLs publiques trouvées sur le web (Outdooractive + Wikimedia Commons).
+    Si tu publies cette page sur ton site, pense aux conditions de licence/crédit quand c’est nécessaire (souvent le cas pour Wikimedia).
+    Astuce terrain: en juillet à Oslo, prévois <code>anti-moustiques</code> + <code>couche coupe-vent</code>, même si le soleil joue les prolongations.
+  </div>
+</footer>
 
-      .timer {
-        color: #ffd700;
-        font-size: clamp(36px, 8vw, 120px);
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-      }
+<script>
+  const hikes = [
+    {
+      id: "vettakollen",
+      title: "Vettakollen",
+      tags: ["vue", "foret", "urbain"],
+      chips: ["≈ 1.2 km", "≈ 1h", "Panorama Oslofjord"],
+      desc:
+        "Un classique ultra-accessible pour prendre de la hauteur vite fait bien fait. Montée courte mais qui chauffe un peu, puis une vue large sur Oslo, le fjord et les îles. Idéal en fin de journée quand la lumière devient dorée.",
+      imageUrl: "https://img2.oastatic.com/img2/56036588/600x300r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/vettakollen/56036592/"
+    },
+    {
+      id: "sognsvann",
+      title: "Sognsvann (tour du lac)",
+      tags: ["lac", "foret", "urbain"],
+      chips: ["≈ 3.3 km", "≈ 1h", "Graviers faciles"],
+      desc:
+        "Tour de lac très simple, chemin large et roulant, parfait si tu veux une sortie “cerveau en mode avion”. Très sympa pour pique-niquer, tremper les pieds, ou partir ensuite vers la forêt de Nordmarka si l’énergie est là.",
+      imageUrl: "https://img2.oastatic.com/img2/56036728/600x300r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/sognsvann-lake/56036733/"
+    },
+    {
+      id: "frognerseteren_sognsvann",
+      title: "Frognerseteren → Ullevålseter → Sognsvann",
+      tags: ["foret", "lac", "vue"],
+      chips: ["≈ 10.4 km", "≈ 2h30", "Cabane/café en route"],
+      desc:
+        "Une grosse balade… mais “facile” côté logistique: tu prends le métro, tu traverses la forêt (Nordmarka), tu fais une pause à Ullevålseter, puis tu redescends vers Sognsvann. Chemins mixtes (graviers + racines), super ambiance nature.",
+      imageUrl: "https://img.oastatic.com/img2/56036575/320x320r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/frognerseteren-to-ullevalseter-and-sognsvann/56036580/"
+    },
+    {
+      id: "oyungen",
+      title: "Øyungen (Nordmarka)",
+      tags: ["lac", "foret"],
+      chips: ["≈ 5.1 km", "≈ 1h30", "Spot nature + pause"],
+      desc:
+        "Un lac très ‘Norvège carte postale’ au milieu de la forêt. Parfait pour une sortie nature sans viser le sommet: tu marches, tu respires, tu t’arrêtes au bord de l’eau, et tu repars sans te demander où tu as garé ta voiture (spoiler: tu n’en as pas).",
+      imageUrl: "https://img0.oastatic.com/img2/56036641/320x320r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/oyungen-lake/56036645/"
+    },
+    {
+      id: "bogstadgard",
+      title: "Bogstadgård & Bogstadvannet",
+      tags: ["lac", "urbain"],
+      chips: ["≈ 2.6 km", "≈ 1h", "Balade très douce"],
+      desc:
+        "Petite rando-promenade autour d’un domaine historique et du lac Bogstadvannet. Très bon plan si tu veux un truc calme, facile, photogénique, et compatible avec une journée déjà bien remplie.",
+      imageUrl: "https://img2.oastatic.com/img2/56036618/320x320r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/bogstadgard/56036627/"
+    },
+    {
+      id: "noklevann",
+      title: "Nøklevann (Østmarka)",
+      tags: ["lac", "foret"],
+      chips: ["≈ 8 km", "≈ 1h30", "Picnic/baignade"],
+      desc:
+        "Large tour de lac dans Østmarka: sentiers faciles, coins de pique-nique, et une ambiance ‘week-end’ sans quitter Oslo. Très bien quand tu veux marcher longtemps sans difficulté technique.",
+      imageUrl: "https://img1.oastatic.com/img2/56036702/320x320r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/oslo/noklevann/56036707/"
+    },
+    {
+      id: "ostensjovannet",
+      title: "Østensjøvannet (tour du lac, réserve nature)",
+      tags: ["lac", "urbain"],
+      chips: ["≈ 4–5 km", "≈ 1h", "Oiseaux & passerelles"],
+      desc:
+        "Balade plate et très accessible autour d’un lac connu pour ses oiseaux. Idéal si tu veux un truc ‘facile facile’, avec de bonnes chances de voir de la faune, sans te farcir une montée.",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/20/Ostensjovannet.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Ostensjovannet.jpg"
+    },
+    {
+      id: "bygdoi",
+      title: "Bygdøy (chemin côtier, plages et criques)",
+      tags: ["urbain", "vue"],
+      chips: ["≈ 2–6 km", "≈ 1–2h", "Mer, pins, petites baies"],
+      desc:
+        "Une balade ‘bord de mer’ à Oslo: tu longes la côte, tu passes par des petites criques, des spots où poser une serviette, et tu gardes toujours un œil sur le fjord. Très bon plan si tu veux marcher sans te sentir loin de la ville.",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Bygd%C3%B8y_Oslo.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Bygd%C3%B8y_Oslo.jpg"
+    },
+    {
+      id: "kolsastoppen",
+      title: "Kolsåstoppen (Bærum, juste à côté d’Oslo)",
+      tags: ["vue", "foret"],
+      chips: ["≈ 7.4 km", "≈ 2h", "Vue Oslofjord"],
+      desc:
+        "Une rando accessible avec une vraie récompense: panorama très large sur le fjord. Le chemin traverse forêt et petit lac, puis ça s’ouvre d’un coup. Bonus utile en été: prévoir un anti-moustiques.",
+      imageUrl: "https://img0.oastatic.com/img2/56036581/600x300r/variant.jpg",
+      sourceUrl: "https://www.outdooractive.com/en/route/hiking-trail/barum/kolsastoppen/56036587/"
+    },
+    {
+      id: "noeklevann_alt",
+      title: "Nøklevann (photo alternative Wikimedia)",
+      tags: ["lac", "foret"],
+      chips: ["Option image", "Wikimedia Commons"],
+      desc:
+        "Même spot, autre ambiance. Utile si tu veux une image ‘coucher de soleil’ plus marquée dans ta page.",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Noeklevann.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Noeklevann.jpg"
+    }
+  ];
 
-      .labels,
-      .t-unit {
-        font-size: 0.7em;
-        color: white;
-        margin-top: 8px;
-        opacity: 0.7;
-        text-transform: uppercase;
-        /*letter-spacing: 0.1em;*/
-        letter-spacing: 5px;
-      }
+  const grid = document.getElementById("grid");
+  const input = document.getElementById("q");
+  const buttons = [...document.querySelectorAll(".btn[data-filter]")];
 
-      .workdays {
-        font-size: 70px !important;
-        margin-top: 30px;
-        font-size: 28px;
-      }
+  let activeFilter = "all";
 
-      /* Le nombre de jours ouvrés est mis en valeur */
-      .workdays strong {
-        font-size: clamp(48px, 7vw, 100px);
-        font-weight: 700;
-        color: #ffd700;
-      }
+  function matchesFilter(hike){
+    if (activeFilter === "all") return true;
+    return hike.tags.includes(activeFilter);
+  }
 
-      /* Animation pour faire défiler les images du diaporama.
-       Chaque image reste visible pendant environ 5 secondes avant de
-       s’estomper pour laisser place à la suivante. */
-      @keyframes fade {
-        0%,
-        33% {
-          opacity: 1;
-        }
-        40%,
-        100% {
-          opacity: 0;
-        }
-      }
+  function matchesQuery(hike, q){
+    if (!q) return true;
+    const hay = (hike.title + " " + hike.desc + " " + hike.tags.join(" ") + " " + hike.chips.join(" ")).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }
 
-      /* Applique l’animation à toutes les diapositives */
-      .slide {
-        animation: fade 15s infinite;
-      }
+  function iconFor(tags){
+    if (tags.includes("vue")) return "👀";
+    if (tags.includes("lac")) return "🌊";
+    if (tags.includes("foret")) return "🌲";
+    return "🥾";
+  }
 
-      /* Décale le début de l’animation pour chaque image afin qu’elles ne se
-       chevauchent pas */
-      .slide:nth-child(1) {
-        animation-delay: 0s;
-      }
-      .slide:nth-child(2) {
-        animation-delay: 5s;
-      }
-      .slide:nth-child(3) {
-        animation-delay: 10s;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="slideshow-container">
-      <!-- Les photos d'Asie du Sud‑Est téléchargées se trouvent dans le dossier partagé -->
-      <img
-        class="slide"
-        src="florian-wehde-lY87gHWdGNo-unsplash.jpg"
-        alt="Rue animée en Asie du Sud‑Est"
-      />
-      <img
-        class="slide"
-        src="giuliano-gabella-S2aZq6yG-b4-unsplash.jpg"
-        alt="Lagune turquoise en Asie du Sud‑Est"
-      />
-      <img
-        class="slide"
-        src="guille-alvarez-P11Z-nILhCs-unsplash.jpg"
-        alt="Pêcheur avec filet en Asie du Sud‑Est"
-      />
-    </div>
+  function render(){
+    const q = input.value.trim();
+    const filtered = hikes.filter(h => matchesFilter(h) && matchesQuery(h, q));
 
-    <div class="wrap">
-      <div class="content">
-        <div class="title">Année sabbatique dans...</div>
-        <div id="timer" class="timer">--j --h --m --s</div>
-        <!-- <div class="labels">jours · heures · minutes · secondes</div> -->
-        <div class="workdays">
-          Jours de travail restants : <strong id="workdays">--</strong>
+    grid.innerHTML = filtered.map(h => `
+      <article class="card" data-id="${h.id}">
+        <div class="media">
+          <img loading="lazy" src="${h.imageUrl}" alt="${h.title}" />
         </div>
-      </div>
-    </div>
+        <div class="content">
+          <div class="titleline">
+            <h2>${iconFor(h.tags)} ${h.title}</h2>
+          </div>
 
-    <script>
-      // Date cible : 31 mai 2026 à 23 h 59 min 59 s
-      const TARGET = new Date(2026, 4, 31, 23, 59, 59);
+          <div class="chips">
+            ${h.chips.map(c => `<span class="chip">${c}</span>`).join("")}
+          </div>
 
-      // Jours fériés en France (format AAAAMMJJ)
-      const PUBLIC_HOLIDAYS = new Set([
-        "20260406", // Lundi de Pâques
-        "20260501", // Fête du Travail
-        "20260508", // Victoire de 1945
-        "20260514", // Ascension
-        "20260525", // Lundi de Pentecôte
-      ]);
+          <p class="desc">${h.desc}</p>
 
-      // Congés personnels (à personnaliser)
-      const PERSONAL_LEAVES = new Set([
-        "20260507",
-        // "20260512",
-        // "20260513"
-      ]);
+          <div class="meta">
+            <small>Tags: ${h.tags.map(t => `#${t}`).join(" ")}</small>
+            <a class="link" href="${h.sourceUrl}" target="_blank" rel="noopener noreferrer">
+              Détails / source ↗
+            </a>
+          </div>
+        </div>
+      </article>
+    `).join("");
 
-      // Convertit une date en chaîne AAAAMMJJ
-      function formatYYYYMMDD(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return `${y}${m}${d}`;
-      }
+    if (filtered.length === 0){
+      grid.innerHTML = `
+        <div class="card" style="grid-column: span 12;">
+          <div class="content">
+            <h2>🤷 Rien trouvé</h2>
+            <p class="desc">Essaie un autre mot-clé (ex: <b>vue</b>, <b>lac</b>, <b>forêt</b>, <b>baignade</b>).</p>
+          </div>
+        </div>
+      `;
+    }
+  }
 
-      // Calcule le nombre de jours ouvrés restant entre deux dates incluses
-      function businessDaysRemaining(start, end) {
-        const s = new Date(start);
-        const e = new Date(end);
-        s.setHours(0, 0, 0, 0);
-        e.setHours(0, 0, 0, 0);
-        if (s > e) return 0;
-        let count = 0;
-        for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
-          const day = d.getDay();
-          const isWeekend = day === 0 || day === 6;
-          const key = formatYYYYMMDD(d);
-          const isHoliday = PUBLIC_HOLIDAYS.has(key);
-          const isPersonalLeave = PERSONAL_LEAVES.has(key);
-          if (!isWeekend && !isHoliday && !isPersonalLeave) {
-            count++;
-          }
-        }
-        return count;
-      }
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+  });
 
-      // Met à jour le compte à rebours et le nombre de jours ouvrés
-      function tick() {
-        const now = new Date();
-        let diff = TARGET - now;
-        if (diff < 0) diff = 0;
-        const totalSeconds = Math.floor(diff / 1000);
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        document.getElementById("timer").innerHTML =
-          `${days} <span class="t-unit">jours</span> ${String(hours).padStart(2, "0")} <span class="t-unit">heures</span> <br/>` +
-          `${String(minutes).padStart(2, "0")} <span class="t-unit">minutes</span> ${String(seconds).padStart(2, "0")} <span class="t-unit">secondes</span>`;
-        document.getElementById("workdays").textContent = businessDaysRemaining(
-          now,
-          TARGET,
-        );
-      }
-      // Mise à jour initiale, puis toutes les secondes
-      tick();
-      setInterval(tick, 1000);
+  input.addEventListener("input", render);
 
-      // Gestion du diaporama : fait défiler les images avec un fondu
-      const slides = document.querySelectorAll(".slide");
-      let currentSlide = 0;
-      function showSlide() {
-        slides.forEach((slide, i) => {
-          slide.style.opacity = i === currentSlide ? "1" : "0";
-        });
-        currentSlide = (currentSlide + 1) % slides.length;
-      }
-      // Affiche la première image immédiatement
-      showSlide();
-      // Change d’image toutes les 5 secondes
-      setInterval(showSlide, 15000);
-    </script>
-  </body>
+  render();
+</script>
+</body>
 </html>
